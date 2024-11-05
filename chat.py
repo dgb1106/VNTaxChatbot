@@ -3,6 +3,7 @@ import os
 from dotenv import load_dotenv
 
 load_dotenv()
+# add your own API key
 api_key = os.getenv("API_KEY")
 instruction = os.getenv("INSTRUCTION")
 
