@@ -1,10 +1,12 @@
 import gradio as gr
 from chat import Chat
+import normalizeQuestion
 
 chatbot = Chat()
 
 def greet(question):
-    answer = chatbot.call_llm_api(question)
+    prompt = normalizeQuestion.preprocess_query(question)
+    answer = chatbot.generate_response(prompt)
     return answer
 
 demo = gr.Interface(

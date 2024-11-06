@@ -1,23 +1,34 @@
 from pymongo.mongo_client import MongoClient
 from pymongo.server_api import ServerApi
+import os
+import EnvironmentVariables
 
-uri = "mongodb+srv://heyiamdgb:Gb11062005@vntaxchatbot.qqw1j.mongodb.net/?retryWrites=true&w=majority&appName=VNTaxChatbot"
-
-# Create a new client and connect to the server
-client = MongoClient(uri, server_api=ServerApi('1'))
-db = client["TaxDocuments"]
-collection = db["Definitions"]
+class DBConnection:
+    def __init__(self) -> None:
+        client = MongoClient(EnvironmentVariables.mongodbURI, server_api=ServerApi('1'))
+        self.db = client["TaxDocuments"]
+        self.collection = self.db["Definitions"]
+        
+    def getResult(self, key):
+        query = {"name": {"$regex": key, "$options": "i"}}
+        result = self.collection.find_one(query, {"definition": 1, "_id": 0})
+        return result;
+        
 
 # documents = collection.find()
 # for doc in documents:
 #     print(doc)
 
 # query = {"name": "Hoạt động thương mại điện tử"}
-query = {"name": {"$regex": "Hoạt động", "$options": "i"}}
-result = collection.find(query)
 
-for res in result:
-    print(res)
+def main():
+    key = input()
+    dbConnection = DBConnection()
+    result = dbConnection.getResult(key)
+    print(result["definition"])
+        
+if __name__ == "__main__":
+    main()
 
 # Send a ping to confirm a successful connection
 # try:

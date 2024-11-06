@@ -1,24 +1,35 @@
 import google.generativeai as genai
 import os
-from dotenv import load_dotenv
-
-load_dotenv()
-# add your own API key
-api_key = os.getenv("API_KEY")
-instruction = os.getenv("INSTRUCTION")
+import EnvironmentVariables
+from mongoDBConnection import DBConnection
 
 class Chat:
     def __init__(self):
-        genai.configure(api_key=api_key)
+        genai.configure(api_key=EnvironmentVariables.gemini_api_key)
         self.model = genai.GenerativeModel(
-            model_name="gemini-1.5-flash",
-            system_instruction=instruction
+            model_name=EnvironmentVariables.model,
+            system_instruction=EnvironmentVariables.instruction
         )
     
-    def call_llm_api(self, question):
-        response = self.model.generate_content(question)
+    def call_llm_api(self, prompt):
+        response = self.model.generate_content(prompt)
         #print(response.text)
         return response.text
+    
+    def search_knowledge_base(self, query):
+        connection = DBConnection()
+        result = connection.getResult(query)
+        if result:
+            return result["definition"]
+    
+    def generate_response(self, query):
+        response = self.search_knowledge_base(query)
+        if response:
+            prompt = "Sử dụng thông tin sau đây để trả lời câu hỏi.\n"
+            prompt += f"Dữ liệu: {response}\nCâu hỏi: {query}"
+            return self.call_llm_api(prompt)
+        else:
+            return self.call_llm_api(query)
     
 # def main():
 #     s = input("Please enter your question: ")
