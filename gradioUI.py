@@ -4,15 +4,15 @@ import normalizeQuestion
 
 chatbot = Chat()
 
-def greet(question):
+def getResponse(question, temperature):
     prompt = normalizeQuestion.preprocess_query(question)
-    answer = chatbot.generate_response(prompt)
+    answer = chatbot.generate_response(prompt, temperature)
     return answer
 
 demo = gr.Interface(
-    fn=greet,
-    inputs=["text"],
-    outputs=["text"],
+    fn=getResponse,
+    inputs=["text", "slider"],
+    outputs=["markdown"],
 )
 
 demo.launch(share=True)

@@ -14,13 +14,6 @@ class DBConnection:
         result = self.collection.find_one(query, {"definition": 1, "_id": 0})
         return result;
         
-
-# documents = collection.find()
-# for doc in documents:
-#     print(doc)
-
-# query = {"name": "Hoạt động thương mại điện tử"}
-
 def main():
     key = input()
     dbConnection = DBConnection()
